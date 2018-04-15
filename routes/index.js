@@ -1,5 +1,6 @@
 // import models
 var Activity = require('../models/activitys.js');
+var ActivityClassify = require('../models/activityClassify.js');
 
 // connect database
 const mongoose = require('mongoose');
@@ -18,6 +19,27 @@ module.exports = function (app) {
 	// test router
 	app.get('/', function (req, res) {
 		res.render('index.ejs', {title: 'Express'});
+	});
+
+	// get activity class router
+	app.get('/getClass', function(req, res) {
+
+	});
+
+	// add activity class router
+	app.get('/addClass', function (req, res) {
+		var user = req.query.user;
+		var activityClassName = req.query.activityClassName;
+		if (activityClassName != '') {
+			var activityClassify = new ActivityClassify({
+				'user': user,
+				'activityClassName': activityClassName
+			});
+			activityClassify.save((err)=>{
+      			console.log('save status:', err ? 'failed' : 'success');
+  			});
+		}
+		
 	});
 
 	// creater activity router
