@@ -23,7 +23,10 @@ module.exports = function (app) {
 
 	// get activity class router
 	app.get('/getClass', function(req, res) {
-
+		var user = req.query.user;
+		ActivityClassify.find({user: user}, function (err, result) {
+			res.json(result)
+		})
 	});
 
 	// add activity class router
