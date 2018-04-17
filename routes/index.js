@@ -46,15 +46,43 @@ module.exports = function (app) {
 	});
 
 	// creater activity router
-	app.get('/create', function (req, res) {
+	app.post('/create', function (req, res) {
+		let a = req.body.id,
+			b = req.body.user,
+			c = req.body.form.number,
+			d = req.body.form.name,
+			e = req.body.form.thost,
+			f = req.body.form.valueClassify,
+			g = req.body.form.selectedAreaOptions,
+			h = req.body.form.dateStart,
+			i = req.body.form.dateEnd,
+			j = req.body.form.activityTags,
+			k = req.body.form.peopleCount,
+			l = req.body.form.activityRadio,
+			m = req.body.form.imageUrl,
+			n = req.body.form.detail,
+			o = req.body.form.settings,
+			p = req.body.form.issue;
 		var activity = new Activity({
-			'activityNumber': '10',
-  			'activityName': 'jaj',
-  			'activityHost': 'dd'
+			'id': a,
+    		'user': b,
+    		'number': c,
+    		'name': d,
+    		'thost': e,
+    		'Classify': f,
+    		'address': g,
+    		'ds': h,
+    		'de': i,
+    		'tags': j,
+    		'count': k,
+    		'public': l,
+    		'imageUrl': m,
+    		'detail': n,
+    		'settings': o,
+    		'issue': p
 		});
 		activity.save((err)=>{ // add activity
       		console.log('save status:', err ? 'failed' : 'success');
   		});
-		res.json({name:'aaa',pwd:'123'});
 	});
 }
