@@ -8,7 +8,7 @@ var activitySchema = new Schema({
   'number': String,
   'name': String,
   'thost': String,
-  'Classify': String,
+  'classify': String,
   'address': Array,
   'ds': Date,
   'de': Date,

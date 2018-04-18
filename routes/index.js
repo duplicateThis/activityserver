@@ -28,7 +28,6 @@ module.exports = function (app) {
 			res.json(result)
 		})
 	});
-
 	// add activity class router
 	app.get('/addClass', function (req, res) {
 		var user = req.query.user;
@@ -44,6 +43,31 @@ module.exports = function (app) {
 		}
 		
 	});
+	// edit class
+	app.get('/editClass', function (req, res) {
+		let user = req.query.user;
+		let nowClass = req.query.val1;
+		let updateClass = req.query.val2;
+		res.send('edeit');
+		ActivityClassify.update({
+			user: user,
+			activityClassName: nowClass
+		}, {
+			$set: {
+				activityClassName: updateClass
+			}
+		}, function (error) {})	
+	})
+	// delete class
+	app.get('/deleteClass', function (req, res) {
+		let user = req.query.user;
+		let val = req.query.val;
+		res.send('delete');
+		ActivityClassify.remove({
+			user: user,
+			activityClassName: val
+		}, function (error) {})
+	})
 
 	// creater activity router
 	app.post('/create', function (req, res) {
@@ -69,7 +93,7 @@ module.exports = function (app) {
     		'number': c,
     		'name': d,
     		'thost': e,
-    		'Classify': f,
+    		'classify': f,
     		'address': g,
     		'ds': h,
     		'de': i,
@@ -84,5 +108,23 @@ module.exports = function (app) {
 		activity.save((err)=>{ // add activity
       		console.log('save status:', err ? 'failed' : 'success');
   		});
+  		res.send('create');
 	});
+
+	// get activity list
+	app.get('/getList', function (req, res) {
+		let search = {user: req.query.user, id: req.query.id, issue: req.query.issue};
+		if (req.query.classify) {
+			search.classify = req.query.classify
+		}
+		if (req.query.searchW) {
+			search.$or = [
+				{name: {$regex:req.query.searchW}},
+				{thost: {$regex:req.query.searchW}}
+			]
+		}
+		Activity.find(search, function (err, result) {
+			res.json(result)
+		})
+	})
 }
