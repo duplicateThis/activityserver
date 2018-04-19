@@ -1,3 +1,5 @@
+ var ObjectID = require('mongodb').ObjectID;
+
 // import models
 var Activity = require('../models/activitys.js');
 var ActivityClassify = require('../models/activityClassify.js');
@@ -76,13 +78,13 @@ module.exports = function (app) {
 			c = req.body.form.number,
 			d = req.body.form.name,
 			e = req.body.form.thost,
-			f = req.body.form.valueClassify,
-			g = req.body.form.selectedAreaOptions,
-			h = req.body.form.dateStart,
-			i = req.body.form.dateEnd,
-			j = req.body.form.activityTags,
-			k = req.body.form.peopleCount,
-			l = req.body.form.activityRadio,
+			f = req.body.form.classify,
+			g = req.body.form.address,
+			h = req.body.form.ds,
+			i = req.body.form.de,
+			j = req.body.form.tags,
+			k = req.body.form.count,
+			l = req.body.form.public,
 			m = req.body.form.imageUrl,
 			n = req.body.form.detail,
 			o = req.body.form.settings,
@@ -125,6 +127,14 @@ module.exports = function (app) {
 		}
 		Activity.find(search, function (err, result) {
 			res.json(result)
+		})
+	})
+
+	// delete activity
+	app.get('/delActivity', function (req, res) {
+		let id = new ObjectID(req.query.id)
+		Activity.remove({_id: id}, function (error, docs) {
+			res.send('delete');
 		})
 	})
 }
