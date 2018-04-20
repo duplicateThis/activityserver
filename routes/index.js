@@ -3,6 +3,7 @@
 // import models
 var Activity = require('../models/activitys.js');
 var ActivityClassify = require('../models/activityClassify.js');
+var ActivitySet = require('../models/activitySet.js');
 
 // connect database
 const mongoose = require('mongoose');
@@ -23,54 +24,7 @@ module.exports = function (app) {
 		res.render('index.ejs', {title: 'Express'});
 	});
 
-	// get activity class router
-	app.get('/getClass', function(req, res) {
-		var user = req.query.user;
-		ActivityClassify.find({user: user}, function (err, result) {
-			res.json(result)
-		})
-	});
-	// add activity class router
-	app.get('/addClass', function (req, res) {
-		var user = req.query.user;
-		var activityClassName = req.query.activityClassName;
-		if (activityClassName != '') {
-			var activityClassify = new ActivityClassify({
-				'user': user,
-				'activityClassName': activityClassName
-			});
-			activityClassify.save((err)=>{
-      			console.log('save status:', err ? 'failed' : 'success');
-  			});
-		}
-		
-	});
-	// edit class
-	app.get('/editClass', function (req, res) {
-		let user = req.query.user;
-		let nowClass = req.query.val1;
-		let updateClass = req.query.val2;
-		res.send('edeit');
-		ActivityClassify.update({
-			user: user,
-			activityClassName: nowClass
-		}, {
-			$set: {
-				activityClassName: updateClass
-			}
-		}, function (error) {})	
-	})
-	// delete class
-	app.get('/deleteClass', function (req, res) {
-		let user = req.query.user;
-		let val = req.query.val;
-		res.send('delete');
-		ActivityClassify.remove({
-			user: user,
-			activityClassName: val
-		}, function (error) {})
-	})
-
+// create activity 
 	// creater activity router
 	app.post('/create', function (req, res) {
 		let a = req.body.id,
@@ -112,6 +66,7 @@ module.exports = function (app) {
   		});
   		res.send('create');
 	});
+// create activity 
 
 	// get activity list
 	app.get('/getList', function (req, res) {
@@ -137,4 +92,116 @@ module.exports = function (app) {
 			res.send('delete');
 		})
 	})
+
+// activity settings
+	// add activity setting
+	app.post('/addSettings', function (req, res) {
+		let user = req.body.params.user;
+		let id = req.body.params.id;
+		let name = req.body.params.name;
+		let state = true;
+		var activitySet = new ActivitySet({
+			'user': user,
+			'id': id,
+			'name': name,
+			'state': state
+		});
+		activitySet.save((err) => {
+			console.log('save status:', err ? 'failed' : 'success');
+			res.send('success')
+		})
+	})
+	// get activity settings
+	app.post('/getSettings', function (req, res) {
+		let user = req.body.params.user;
+		let id = req.body.params.id;
+		ActivitySet.find({
+			user: user,
+			id: id
+		}, function (err, result) {
+			res.json(result)
+		})
+	})
+	// change setting state
+	app.get('/changeState', function (req, res) {
+		let user = req.query.user;
+		let id = req.query.id;
+		let _id = new ObjectID(req.query._id);
+		let state = req.query.state;
+		if(state == 'false') {
+			ActivitySet.update({user: user, id: id, _id: _id}, {$set: {state: true}}, function (error) {
+				res.send('success')
+			})
+		} else {
+			ActivitySet.update({user: user, id: id, _id: _id}, {$set: {state: false}}, function (error) {
+				res.send('success')
+			})
+		}
+		
+	})
+	// edit activity settings
+	app.get('/editSet', function (req, res) {
+		let user = req.query.user;
+		let id = req.query.id;
+		let _id = new ObjectID(req.query._id);
+		let name = req.query.name;
+		ActivitySet.update({user: user, id: id, _id: _id}, {$set: {name: name}}, function (error) {
+			res.send('success')
+		})
+	})
+	// delete activity settings
+	app.get('/delSet', function (req, res) {
+		let user = req.query.user;
+		let id = req.query.id;
+		let _id = new ObjectID(req.query._id);
+		ActivitySet.remove({user: user, id: id, _id: _id}, function (error, docs) {
+			res.send('delete success');
+		})
+	})
+// activity settings
+	
+// activity classify
+	// get activity class 
+	app.post('/getClass', function(req, res) {
+		let user = req.body.params.user;
+		let id = req.body.params.id;
+		ActivityClassify.find({user: user, id: id}, function (err, result) {
+			res.json(result)
+		})
+	})
+	// add activity class 
+	app.post('/addClass', function (req, res) {
+		let user = req.body.params.user;
+		let id = req.body.params.id;
+		let name = req.body.params.name;
+		var activityClassify = new ActivityClassify({
+			'user': user,
+			'id': id,
+			'name': name
+		});
+ 		activityClassify.save((err) => {
+			console.log('save status:', err ? 'failed' : 'success');
+			res.send('success')
+		})
+	})
+	// edit activity class
+	app.get('/editClass', function (req, res) {
+		let user = req.query.user;
+		let id = req.query.id;
+		let _id = new ObjectID(req.query._id);
+		let name = req.query.name;
+		ActivityClassify.update({_id: _id}, {$set: {name: name}}, function (error) {
+			res.send('success')
+		})
+	})
+	// delete activity class
+	app.get('/delClass', function (req, res) {
+		let user = req.query.user;
+		let id = req.query.id;
+		let _id = new ObjectID(req.query._id);
+		ActivityClassify.remove({user: user, id: id, _id: _id}, function (error, docs) {
+			res.send('delete success');
+		})
+	})
+// activity classify
 }
