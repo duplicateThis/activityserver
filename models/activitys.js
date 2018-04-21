@@ -5,7 +5,6 @@ var activitySchema = new Schema({
   // 'activityId': {type: String},
   'id': String,
   'user': String,
-  'number': String,
   'name': String,
   'thost': String,
   'classify': String,

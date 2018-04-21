@@ -5,6 +5,25 @@ var Activity = require('../models/activitys.js');
 var ActivityClassify = require('../models/activityClassify.js');
 var ActivitySet = require('../models/activitySet.js');
 
+var schedule = require('node-schedule')
+var rule = new schedule.RecurrenceRule();
+
+　　var times = [];
+
+　　for(var i=1; i<60; i++){
+
+　　　　times.push(i);
+
+　　}
+
+　　rule.second = times;
+
+　　var c=0;
+　　var j = schedule.scheduleJob(rule, function(){
+   　　 c++;
+   　　console.log(c);
+　　});
+
 // connect database
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/data_a');
@@ -25,73 +44,73 @@ module.exports = function (app) {
 	});
 
 // create activity 
-	// creater activity router
 	app.post('/create', function (req, res) {
 		let a = req.body.id,
 			b = req.body.user,
-			c = req.body.form.number,
-			d = req.body.form.name,
-			e = req.body.form.thost,
-			f = req.body.form.classify,
-			g = req.body.form.address,
-			h = req.body.form.ds,
-			i = req.body.form.de,
-			j = req.body.form.tags,
-			k = req.body.form.count,
-			l = req.body.form.public,
-			m = req.body.form.imageUrl,
-			n = req.body.form.detail,
-			o = req.body.form.settings,
-			p = req.body.form.issue;
+			c = req.body.form.name,
+			d = req.body.form.thost,
+			e = req.body.form.classify,
+			f = req.body.form.address,
+			g = req.body.form.ds,
+			h = req.body.form.de,
+			i = req.body.form.tags,
+			j = req.body.form.count,
+			k = req.body.form.public,
+			l = req.body.form.imageUrl,
+			m = req.body.form.detail,
+			n = req.body.form.settings,
+			o = req.body.form.issue;
 		var activity = new Activity({
 			'id': a,
     		'user': b,
-    		'number': c,
-    		'name': d,
-    		'thost': e,
-    		'classify': f,
-    		'address': g,
-    		'ds': h,
-    		'de': i,
-    		'tags': j,
-    		'count': k,
-    		'public': l,
-    		'imageUrl': m,
-    		'detail': n,
-    		'settings': o,
-    		'issue': p
+    		'name': c,
+    		'thost': d,
+    		'classify': e,
+    		'address': f,
+    		'ds': g,
+    		'de': h,
+    		'tags': i,
+    		'count': j,
+    		'public': k,
+    		'imageUrl': l,
+    		'detail': m,
+    		'settings': n,
+    		'issue': o
 		});
 		activity.save((err)=>{ // add activity
       		console.log('save status:', err ? 'failed' : 'success');
+      		res.send('created');
   		});
-  		res.send('create');
 	});
 // create activity 
 
-	// get activity list
-	app.get('/getList', function (req, res) {
-		let search = {user: req.query.user, id: req.query.id, issue: req.query.issue};
-		if (req.query.classify) {
-			search.classify = req.query.classify
+// list
+	// search
+	app.post('/getList', function (req, res) {
+		let search = {user: req.body.params.user, id: req.body.params.id, issue: req.body.params.issue};
+		if (req.body.params.classify) {
+			search.classify = req.body.params.classify
 		}
-		if (req.query.searchW) {
+		if (req.body.params.searchW) {
 			search.$or = [
-				{name: {$regex:req.query.searchW}},
-				{thost: {$regex:req.query.searchW}}
+				{name: {$regex:req.body.params.searchW}},
+				{thost: {$regex:req.body.params.searchW}}
 			]
 		}
 		Activity.find(search, function (err, result) {
 			res.json(result)
 		})
 	})
-
-	// delete activity
-	app.get('/delActivity', function (req, res) {
-		let id = new ObjectID(req.query.id)
-		Activity.remove({_id: id}, function (error, docs) {
+	// delete
+	app.post('/delActivity', function (req, res) {
+		let _id = new ObjectID(req.body.params._id);
+		let id = req.body.params.id;
+		let user = req.body.params.user;
+		Activity.remove({_id: _id, id: id, user: user}, function (error, docs) {
 			res.send('delete');
 		})
 	})
+// list
 
 // activity settings
 	// add activity setting
