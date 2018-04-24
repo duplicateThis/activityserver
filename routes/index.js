@@ -5,25 +5,6 @@ var Activity = require('../models/activitys.js');
 var ActivityClassify = require('../models/activityClassify.js');
 var ActivitySet = require('../models/activitySet.js');
 
-var schedule = require('node-schedule')
-var rule = new schedule.RecurrenceRule();
-
-　　var times = [];
-
-　　for(var i=1; i<60; i++){
-
-　　　　times.push(i);
-
-　　}
-
-　　rule.second = times;
-
-　　var c=0;
-　　var j = schedule.scheduleJob(rule, function(){
-   　　 c++;
-   　　console.log(c);
-　　});
-
 // connect database
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/data_a');
@@ -59,7 +40,8 @@ module.exports = function (app) {
 			l = req.body.form.imageUrl,
 			m = req.body.form.detail,
 			n = req.body.form.settings,
-			o = req.body.form.issue;
+			o = req.body.form.issue,
+			p = req.body.time;
 		var activity = new Activity({
 			'id': a,
     		'user': b,
@@ -72,10 +54,15 @@ module.exports = function (app) {
     		'tags': i,
     		'count': j,
     		'public': k,
-    		'imageUrl': l,
+    		'imgUrl': l,
     		'detail': m,
     		'settings': n,
-    		'issue': o
+    		'issue': o,
+    		'iTime': p,
+    		'holding': 0,
+    		'held': 0,
+    		'counted': '',
+    		'imgURLed': []
 		});
 		activity.save((err)=>{ // add activity
       		console.log('save status:', err ? 'failed' : 'success');
@@ -97,9 +84,53 @@ module.exports = function (app) {
 				{thost: {$regex:req.body.params.searchW}}
 			]
 		}
+		if (req.body.params.holding) {
+			search.holding = true
+		}
+		if (req.body.params.held) {
+			search.held = true
+		}
 		Activity.find(search, function (err, result) {
 			res.json(result)
 		})
+	})
+	// edit
+	app.post('/editActivity', function (req, res) {
+		let _id = new ObjectID(req.body._id);
+			a = req.body.id,
+			b = req.body.user,
+			c = req.body.form.name,
+			d = req.body.form.thost,
+			e = req.body.form.classify,
+			f = req.body.form.address,
+			g = req.body.form.ds,
+			h = req.body.form.de,
+			i = req.body.form.tags,
+			j = req.body.form.count,
+			k = req.body.form.public,
+			l = req.body.form.imageUrl,
+			m = req.body.form.detail,
+			n = req.body.form.settings,
+			o = req.body.form.issue,
+			p = req.body.time;
+			Activity.update({user: b, id: a, _id: _id}, {$set: {
+				name: c,
+				thost: d,
+				classify: e,
+				address: f,
+				ds: g,
+				de: h,
+				tags: i,
+				count: j,
+				public: k,
+				imageUrl: l,
+				detail: m,
+				settings: n,
+				issue: o,
+				Itime: p
+			}}, function (error) {
+				res.send('success')
+			})
 	})
 	// delete
 	app.post('/delActivity', function (req, res) {
@@ -111,6 +142,14 @@ module.exports = function (app) {
 		})
 	})
 // list
+
+// active
+	// save activity image (to do)
+// active
+
+// participate
+	// get participate
+// participate
 
 // activity settings
 	// add activity setting
@@ -223,4 +262,14 @@ module.exports = function (app) {
 		})
 	})
 // activity classify
+
+// participate
+	// get participate
+	
+// participate
+
+
+
+// front end
+	// save paticipate
 }

@@ -14,10 +14,15 @@ var activitySchema = new Schema({
   'tags': Array,
   'count': Number,
   'public': Boolean,
-  'imageUrl': String,
+  'imgUrl': Array,
   'detail': String,
   'settings': Array,
-  'issue': Boolean
+  'issue': Boolean,
+  'iTime': Date,
+  'holding': Boolean,
+  'held': Boolean,
+  'counted': Number,
+  'imgUrled': Array
 })
 
 module.exports = mongoose.model('activity', activitySchema)
